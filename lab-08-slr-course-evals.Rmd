@@ -135,13 +135,40 @@ Linear model is in the form $\hat{y} = b_0 + b_1 x$.
 4.  Let's see if the apparent trend in the plot is something more than natural variation.
     Fit a linear model called `score_bty_fit` to predict average professor evaluation `score` by average beauty rating (`bty_avg`).
     Based on the regression output, write the linear model.
+    
+```{r}
+score_bty_fit <- linear_reg() %>% 
+  set_engine("lm") %>% 
+  fit(score ~ bty_avg, data = evals)
 
+score_bty_fit %>% tidy()
+
+
+```
+***The Liner model is:***
+***score = 3.88 + 0.07* Beauty Rating***
 5.  Recreate the scatterplot from Exercise 2, and add the regression line to this plot in orange colour, with shading for the uncertainty of the line turned off.
+
+
+```{r}
+evals %>%
+  ggplot(aes(x = bty_avg, y = score)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "lm", se = FALSE,color="#FF7F50") +
+  xlab("Beauty Average Rating") +
+  ylab("Average Professor Evaluation") +
+  ggtitle("Scatter plot of Average Beauty Rating to Average Eval")
+
+```
 
 6.  Interpret the slope of the linear model in context of the data.
 
+***For a average beauty increased bby 1 the average evaluation rating goes up by 0.07***
+
 7.  Interpret the intercept of the linear model in context of the data.
     Comment on whether or not the intercept makes sense in this context.
+    
+***For an average beauty rating of 0 the average evaluation rating is 3.88. This doesn't make sense in the date as there are not beuty ratings that are 0.***
 
 
 🧶 ✅ ⬆️ *If you haven't done so recently, knit, commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
