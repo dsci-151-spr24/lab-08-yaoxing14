@@ -52,6 +52,7 @@ You can load them by running the following in your Console:
 library(tidyverse) 
 library(tidymodels)
 library(openintro)
+library(flextable)
 ```
 
 ## Data
@@ -141,7 +142,7 @@ score_bty_fit <- linear_reg() %>%
   set_engine("lm") %>% 
   fit(score ~ bty_avg, data = evals)
 
-score_bty_fit %>% tidy()
+score_bty_fit %>% tidy() %>% flextable()
 
 
 ```
@@ -177,21 +178,87 @@ evals %>%
 
 9.  Fit a new linear model called `score_gender_fit` to predict average professor evaluation `score` based on `gender` of the professor.
     Based on the regression output, write the linear model and interpret the slope and intercept in context of the data.
+    
+    
+```{r}
+score_gender_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(score ~ gender, data = evals) %>%
+  tidy()
 
+score_gender_fit 
+
+
+```
+
+***The model is:***
+***score = 4.09 + 0.14* Male***
+***A male professor on average scores 0.14 higher on evalutions than a female professor. on average a femals professor scores 4.09 on the ratings.***
 10. What is the equation of the line corresponding to male professors?
     What is it for female professors?
+    
+***For Males***
+***score = 4.09 + 0.14 = 4.23***
+***For Females:***
+***score = 4.09***
+
 
 11. Fit a new linear model called `score_rank_fit` to predict average professor evaluation `score` based on `rank` of the professor.
     Based on the regression output, write the linear model and interpret the slopes and intercept in context of the data.
+    
+```{r}
+score_rank_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(score ~ rank, data = evals) %>%
+  tidy()
+
+score_rank_fit
+```
+
+
+**The model is:**
+
+***score= 4.28 - 0.12xTenure Track - 0.14x Tenured***
+
+$$
+\widehat{score}_i = 4.28 - 0.12 \times \text{Tenure Track} - 0.14 \times \text Tenured_i
+$$
+
+***The average rating for a teaching track professor is 4.28. The average rating for a tenure track professor is 0.12 points lower than a tcaching track professor, The average rating*for a tenured professor is 0.14 points lower than a teaching professor>***
 
 12. Create a new variable called `rank_relevel` where `"tenure track"` is the baseline level.
+
+```{r}
+evals <- evals %>%
+  mutate(rank_relevel = relevel(rank, ref = "tenured"))
+```
+
 
 13. Fit a new linear model called `score_rank_relevel_fit` to predict average professor evaluation `score` based on `rank_relevel` of the professor.
     This is the new (releveled) variable you created in Exercise 12.
     Based on the regression output, write the linear model and interpret the slopes and intercept in context of the data.
-   
+
+```{r}
+score_rank_relevel_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(score ~ rank_relevel, data = evals) %>%
+  tidy()
+
+score_rank_relevel_fit %>% flextable() %>% autofit()
+```
+**The model is:**
+
+$$
+\widehat{score} = 4.14 + 0.14 \times teaching + 0.02 \times Tenure tracks
+$$
+***The average rating for a tenured professor is 4.14. The average rating for a teaching professor is 0.14 points higher than a tenured professor.The average rating for a tenure track professor is 0.02 points higher than a tenured professor.***
 
 14. Create another new variable called `tenure_eligible` that labels `"teaching"` faculty as `"no"` and labels `"tenure track"` and `"tenured"` faculty as `"yes"`.
+
+```{r}
+evals <- evals %>%
+  mutate(tenure_eligible = if_else(rank == "teaching", "no", "yes"))
+```
 
 
 🧶 ✅ ⬆️ Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards and review the md document on GitHub to make sure you're happy with the final state of your work.*
